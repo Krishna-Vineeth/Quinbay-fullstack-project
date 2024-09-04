@@ -3,7 +3,6 @@ package com.example.user.javabackendproject.services;
 import com.example.user.javabackendproject.dto.SignUpDto;
 import com.example.user.javabackendproject.dto.UserDto;
 import com.example.user.javabackendproject.entities.User;
-import com.example.user.javabackendproject.exceptions.ResourceNotFoundException;
 import com.example.user.javabackendproject.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,9 +91,23 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUserById(Long userId) {
+
         userRepository.deleteById(userId);
     }
 
+    public void addOrderToUser(Long userId, String orderId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if (user.getOrderList() == null) {
+            user.setOrderList(new ArrayList<>());
+        }
+        user.getOrderList().add(orderId);
+        userRepository.save(user);
+    }
+
+    public List<String> getUserOrders(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return user.getOrderList() != null ? user.getOrderList() : new ArrayList<>();
+    }
 }
 
 

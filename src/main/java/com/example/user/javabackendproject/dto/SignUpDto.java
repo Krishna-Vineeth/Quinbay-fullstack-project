@@ -9,6 +9,6 @@ import java.util.Set;
 public class SignUpDto {
     private String email;
     private String password;
-    private String name;
+    private String username;
     private Set<Role> roles;
 }
